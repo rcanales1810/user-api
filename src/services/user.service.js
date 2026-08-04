@@ -1,4 +1,3 @@
-require("dotenv").config();
 const pool = require("../config/db");
 
 const getAllUsers = async () => {
@@ -20,7 +19,19 @@ const createNewUser = async (name, email) => {
     return result.rows[0];
 };
 
+const getUserById = async (id) => {
+    const result = await pool.query(
+        `SELECT * 
+        FROM users
+        WHERE id = $1`,
+        [id]
+    );
+
+    return result.rows[0];
+};
+
 module.exports = {
     getAllUsers,
-    createNewUser
+    createNewUser,
+    getUserById
 };

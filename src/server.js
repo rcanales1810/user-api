@@ -14,6 +14,6 @@ pool.connect()
         console.error("Error connecting:", err.message);
     });
 
-app.listen(PORT, ()=>{
-    console.log(`servidor en puerto ${PORT}`);    
+app.listen(PORT, () => {
+    console.log(`servidor en puerto ${PORT}`);
 });

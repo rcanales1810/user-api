@@ -65,7 +65,39 @@ const createNewUser = async (req, res) => {
     };
 }
 
+const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = Number(id);
+
+        if (!Number.isInteger(userId) || userId <= 0) {
+            return res.status(400).json({
+                message: "ID inválido. El ID debe ser un entero positivo"
+            });
+        }
+
+        const user = await userService.getUserById(id);
+
+        //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado"
+            });
+        }
+
+        res.status(200).json({
+            user
+        });
+    } catch {
+        console.error(error);
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     getUsers,
-    createNewUser
+    createNewUser,
+    getUserById
 };
