@@ -8,6 +8,16 @@ const getAllUsers = async () => {
     return result.rows;
 };
 
+const getActiveUsers = async () => {
+    const result = await pool.query(
+        `SELECT * FROM users 
+        WHERE is_active = TRUE
+        ORDER BY id`
+    );
+
+    return result.rows;
+};
+
 const createNewUser = async (name, email) => {
     const result = await pool.query(
         `INSERT INTO users (name, email) 
@@ -23,7 +33,8 @@ const getUserById = async (id) => {
     const result = await pool.query(
         `SELECT * 
         FROM users
-        WHERE id = $1`,
+        WHERE id = $1 
+        AND is_active = TRUE`,
         [id]
     );
 
@@ -40,11 +51,25 @@ const updateUser = async (name, email, id) => {
     );
 
     return result.rows[0];
-}
+};
+
+const deleteUser = async (id) => {
+    const result = await pool.query(
+        `UPDATE users
+        SET is_active = FALSE
+        WHERE id = $1
+        RETURNING *`,
+        [id]
+    );
+
+    return result.rows[0];
+};
 
 module.exports = {
     getAllUsers,
+    getActiveUsers,
     createNewUser,
     getUserById,
-    updateUser
+    updateUser,
+    deleteUser
 };

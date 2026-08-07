@@ -1,18 +1,29 @@
 const userService = require("../services/user.service");
 
-//Método para jalar la lista de usuarios usando SQL
 const getUsers = async (req, res) => {
     try {
-        const users = await userService.getAllUsers();
-        res.json(users);
+
+        const { includeInactive } = req.query;
+        const shouldIncludeInactive = includeInactive === "true";
+
+        let users;
+
+        if (shouldIncludeInactive){
+            users = await userService.getAllUsers();
+        } else {
+            users = await userService.getActiveUsers();
+        }
+
+        return res.status(200).json(users);
     } catch {
+        console.error(error);       
+
         res.status(500).json({
             message: "Error interno del servidor"
         });
     }
 };
 
-//funcion para crear usuarios y agregarlos al array
 const createNewUser = async (req, res) => {
 
     try {
@@ -89,7 +100,6 @@ const getUserById = async (req, res) => {
             user
         });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({
             message: error.message
         });
@@ -155,9 +165,42 @@ const updateUser = async (req, res) => {
 
 }
 
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = Number(id);
+
+        if (!Number.isInteger(userId) || userId <= 0) {
+            return res.status(400).json({
+                message: "ID inválido. El ID debe ser un entero positivo"
+            });
+        }
+
+        const user = await userService.getUserById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado"
+            });
+        }
+
+        const deletedUser = await userService.deleteUser(userId);
+
+        res.status(200).json({
+            deletedUser
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+}
+
 module.exports = {
     getUsers,
     createNewUser,
     getUserById,
-    updateUser
+    updateUser,
+    deleteUser
 };
