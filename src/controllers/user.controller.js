@@ -76,7 +76,7 @@ const getUserById = async (req, res) => {
             });
         }
 
-        const user = await userService.getUserById(id);
+        const user = await userService.getUserById(userId);
 
         //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
         if (!user) {
@@ -88,7 +88,7 @@ const getUserById = async (req, res) => {
         res.status(200).json({
             user
         });
-    } catch {
+    } catch (error) {
         console.error(error);
         return res.status(500).json({
             message: error.message
@@ -96,8 +96,68 @@ const getUserById = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    try {
+        //Obtener el id, user y email
+        const { name, email } = req.body;
+        const { id } = req.params;
+        const userId = Number(id);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        //primero validar el id
+        if (!Number.isInteger(userId) || userId <= 0) {
+            return res.status(400).json({
+                message: "ID inválido. El ID debe ser un entero positivo"
+            });
+        }
+
+        if (!name || !email) {
+            return res.status(400).json({
+                message: "Ambos campos son obligatorios"
+            });
+        }
+
+        //despues, validar que los datos a actualizar sean correctos
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                message: "El correo no tiene el formato correcto: user@mail.com"
+            });
+        }
+
+        //verificar si existe el usuario a actualizar
+        const user = await userService.getUserById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado"
+            });
+        }
+
+        //Llamar al servicio para actualizar
+        const updatedUser = await userService.updateUser(name, email, userId);
+
+        res.status(200).json({
+            updatedUser
+        });
+
+    } catch (error) {
+
+        if (error.code === "23505") {
+            return res.status(409).json({
+                message: "Ese correo ya está registrado"
+            })
+        }
+
+        return res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+
+}
+
 module.exports = {
     getUsers,
     createNewUser,
-    getUserById
+    getUserById,
+    updateUser
 };
