@@ -8,7 +8,7 @@ const getUsers = async (req, res) => {
 
         let users;
 
-        if (shouldIncludeInactive){
+        if (shouldIncludeInactive) {
             users = await userService.getAllUsers();
         } else {
             users = await userService.getActiveUsers();
@@ -16,7 +16,7 @@ const getUsers = async (req, res) => {
 
         return res.status(200).json(users);
     } catch {
-        console.error(error);       
+        console.error(error);
 
         res.status(500).json({
             message: "Error interno del servidor"
@@ -197,10 +197,63 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const patchUser = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const { id } = req.params;
+        const userId = Number(id);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!Number.isInteger(userId) || userId <= 0) {
+            return res.status(400).json({
+                message: "ID inválido. El ID debe ser un entero positivo"
+            });
+        }
+
+        if (name === undefined && email === undefined) {
+            return res.status(400).json({
+                message: "Debes proporcionar al menos un campo para actualizar"
+            });
+        }
+
+        if (email !== undefined && !emailRegex.test(email)) {
+            return res.status(400).json({
+                message: "El correo no tiene el formato correcto: user@mail.com"
+            });
+        }
+
+        const user = await userService.getUserById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado"
+            });
+        }
+
+        const patchedUser = await userService.patchUser(name, email, userId);
+
+        res.status(200).json({
+            patchedUser
+        });
+
+    } catch (error) {
+        if (error.code === "23505") {
+            return res.status(409).json({
+                message: "Ese correo ya está registrado"
+            })
+        }
+
+        return res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+}
+
 module.exports = {
     getUsers,
     createNewUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    patchUser
 };

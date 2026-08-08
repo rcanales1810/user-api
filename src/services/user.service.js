@@ -65,11 +65,42 @@ const deleteUser = async (id) => {
     return result.rows[0];
 };
 
+const patchUser = async (name, email, id) => {
+    const fields = [];
+    const values = [];
+    let parameterIndex = 1;
+
+    if (name !== undefined){
+        fields.push(`name = $${parameterIndex}`);
+        values.push(name);
+        parameterIndex++;
+    }
+
+    if (email !== undefined){
+        fields.push(`email = $${parameterIndex}`);
+        values.push(email);
+        parameterIndex++;
+    }
+    
+    values.push(id);
+
+    const result = await pool.query(
+        `UPDATE users
+        SET ${fields.join(", ")}
+        WHERE id = $${parameterIndex}
+        RETURNING *`,
+        values
+    );
+
+    return result.rows[0];
+}
+
 module.exports = {
     getAllUsers,
     getActiveUsers,
     createNewUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    patchUser
 };
