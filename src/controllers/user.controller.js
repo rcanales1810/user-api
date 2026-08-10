@@ -1,8 +1,8 @@
 const userService = require("../services/user.service");
+const { isValidEmail } = require("../utils/validators");
 
 const getUsers = async (req, res) => {
     try {
-
         const { includeInactive } = req.query;
         const shouldIncludeInactive = includeInactive === "true";
 
@@ -29,14 +29,6 @@ const createNewUser = async (req, res) => {
     try {
         const { name, email } = req.body;
 
-        //Regex = regular expression, es un patrón de búsqueda para una cadena de texto. Aquí, se busca que el correo tenga el 
-        //formato usual de los correos. 
-        // ^ marca el inicio de la expresión y $ el final
-        // [ ] lo que esté dentro son los caracteres permitidos, pero ^ indica negación, por lo que están "prohibidos" los \s, que 
-        //son espacios en blanco, y @
-        //el + indica que es más de un caracter con la misma condición
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
         //validación de los datos ingresados
         //"si name o email son falsos", o sea, si uno o el otro están vacios
         if (!name || !email) {
@@ -48,7 +40,7 @@ const createNewUser = async (req, res) => {
         }
 
         //verificar que el formato del correo sea correcto 
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             return res.status(400).json({
                 message: "El correo no tiene el formato correcto: user@mail.com"
             });
@@ -74,21 +66,12 @@ const createNewUser = async (req, res) => {
             message: "Error interno del servidor"
         });
     };
-}
+};
 
 const getUserById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const userId = Number(id);
-
-        if (!Number.isInteger(userId) || userId <= 0) {
-            return res.status(400).json({
-                message: "ID inválido. El ID debe ser un entero positivo"
-            });
-        }
-
+        const userId = Number(req.params.id);
         const user = await userService.getUserById(userId);
-
         //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
         if (!user) {
             return res.status(404).json({
@@ -104,22 +87,13 @@ const getUserById = async (req, res) => {
             message: error.message
         });
     }
-}
+};
 
 const updateUser = async (req, res) => {
     try {
         //Obtener el id, user y email
         const { name, email } = req.body;
-        const { id } = req.params;
-        const userId = Number(id);
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        //primero validar el id
-        if (!Number.isInteger(userId) || userId <= 0) {
-            return res.status(400).json({
-                message: "ID inválido. El ID debe ser un entero positivo"
-            });
-        }
+        const userId = Number(req.params.id);
 
         if (!name || !email) {
             return res.status(400).json({
@@ -128,7 +102,7 @@ const updateUser = async (req, res) => {
         }
 
         //despues, validar que los datos a actualizar sean correctos
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             return res.status(400).json({
                 message: "El correo no tiene el formato correcto: user@mail.com"
             });
@@ -163,19 +137,11 @@ const updateUser = async (req, res) => {
         });
     }
 
-}
+};
 
 const deleteUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const userId = Number(id);
-
-        if (!Number.isInteger(userId) || userId <= 0) {
-            return res.status(400).json({
-                message: "ID inválido. El ID debe ser un entero positivo"
-            });
-        }
-
+        const userId = Number(req.params.id);
         const user = await userService.getUserById(userId);
 
         if (!user) {
@@ -195,20 +161,12 @@ const deleteUser = async (req, res) => {
             message: "Error interno del servidor"
         });
     }
-}
+};
 
 const patchUser = async (req, res) => {
     try {
         const { name, email } = req.body;
-        const { id } = req.params;
-        const userId = Number(id);
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!Number.isInteger(userId) || userId <= 0) {
-            return res.status(400).json({
-                message: "ID inválido. El ID debe ser un entero positivo"
-            });
-        }
+        const userId = Number(req.params.id);
 
         if (name === undefined && email === undefined) {
             return res.status(400).json({
@@ -216,7 +174,7 @@ const patchUser = async (req, res) => {
             });
         }
 
-        if (email !== undefined && !emailRegex.test(email)) {
+        if (email !== undefined && !isValidEmail(email)) {
             return res.status(400).json({
                 message: "El correo no tiene el formato correcto: user@mail.com"
             });
@@ -247,7 +205,7 @@ const patchUser = async (req, res) => {
             message: "Error interno del servidor"
         });
     }
-}
+};
 
 module.exports = {
     getUsers,

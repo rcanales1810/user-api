@@ -93,7 +93,7 @@ const patchUser = async (name, email, id) => {
     );
 
     return result.rows[0];
-}
+};
 
 module.exports = {
     getAllUsers,
