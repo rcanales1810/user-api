@@ -30,13 +30,6 @@ const createNewUser = async (req, res) => {
         });
     }
 
-    //verificar que el formato del correo sea correcto 
-    if (!isValidEmail(email)) {
-        return res.status(400).json({
-            message: "El correo no tiene el formato correcto: user@mail.com"
-        });
-    }
-
     const user = await userService.createNewUser(name, email);
 
     res.status(201).json({
@@ -66,13 +59,6 @@ const updateUser = async (req, res, next) => {
     if (!name || !email) {
         return res.status(400).json({
             message: "Ambos campos son obligatorios"
-        });
-    }
-
-    //despues, validar que los datos a actualizar sean correctos
-    if (!isValidEmail(email)) {
-        return res.status(400).json({
-            message: "El correo no tiene el formato correcto: user@mail.com"
         });
     }
 
@@ -111,18 +97,6 @@ const deleteUser = async (req, res, next) => {
 
 const patchUser = async (req, res, next) => {
     const { name, email } = req.body;
-
-    if (name === undefined && email === undefined) {
-        return res.status(400).json({
-            message: "Debes proporcionar al menos un campo para actualizar"
-        });
-    }
-
-    if (email !== undefined && !isValidEmail(email)) {
-        return res.status(400).json({
-            message: "El correo no tiene el formato correcto: user@mail.com"
-        });
-    }
 
     const user = await userService.getUserById(req.userId);
 

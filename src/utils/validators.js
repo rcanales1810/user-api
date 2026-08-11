@@ -4,12 +4,27 @@
 // [ ] lo que esté dentro son los caracteres permitidos, pero ^ indica negación, por lo que están "prohibidos" los \s, que 
 //son espacios en blanco, y @
 //el + indica que es más de un caracter con la misma condición
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 };
 
+const isValidName = (name) => {
+    return typeof name === "string" && name.trim().length > 0;
+};
+
+const hasNoPatchFields = (name, email) => {
+    return name === undefined && email === undefined;
+}
+
+const isValidPatchEmail = (email) => {
+    return email !== undefined && !isValidEmail(email);
+}
+
+
 module.exports = {
-    isValidEmail
+    isValidEmail,
+    isValidName,
+    hasNoPatchFields,
+    isValidPatchEmail
 };
