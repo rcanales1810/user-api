@@ -1,5 +1,6 @@
 const express = require("express");
 const validateUserId = require("../middlewares/validateUserId");
+const errorHandler = require("../middlewares/errorHandler");
 
 const {
     getUsers,

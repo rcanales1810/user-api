@@ -5,10 +5,14 @@ const express = require("express");
 const app = express();
 
 //"Invocamos" los routers (por ahora solo a los usuarios)
-const userRoutes = require("./routes/users.route")
+const userRoutes = require("./routes/users.route");
+const errorHandler = require("./middlewares/errorHandler");
 
 app.use(express.json());
 
 app.use("/users", userRoutes);
+
+app.use(errorHandler);
+
 
 module.exports = app;

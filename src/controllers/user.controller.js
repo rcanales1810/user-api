@@ -1,7 +1,7 @@
 const userService = require("../services/user.service");
 const { isValidEmail } = require("../utils/validators");
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
     try {
         const { includeInactive } = req.query;
         const shouldIncludeInactive = includeInactive === "true";
@@ -16,15 +16,11 @@ const getUsers = async (req, res) => {
 
         return res.status(200).json(users);
     } catch {
-        console.error(error);
-
-        res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        next(error);
     }
 };
 
-const createNewUser = async (req, res) => {
+const createNewUser = async (req, res, next) => {
 
     try {
         const { name, email } = req.body;
@@ -54,21 +50,11 @@ const createNewUser = async (req, res) => {
         });
 
     } catch (error) {
-        if (error.code === "23505") {
-            return res.status(409).json({
-                message: "Ese correo ya está registrado"
-            })
-        }
-
-        console.error(error);
-
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        next(error);
     };
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
     try {
         const user = await userService.getUserById(req.userId);
         //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
@@ -82,13 +68,11 @@ const getUserById = async (req, res) => {
             user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
     try {
         //Obtener el id, user y email
         const { name, email } = req.body;
@@ -123,23 +107,12 @@ const updateUser = async (req, res) => {
         });
 
     } catch (error) {
-
-        if (error.code === "23505") {
-            return res.status(409).json({
-                message: "Ese correo ya está registrado"
-            })
-        }
-        
-        console.error(error);
-        
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        next(error);
     }
 
 };
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
     try {
         const user = await userService.getUserById(req.userId);
 
@@ -156,13 +129,11 @@ const deleteUser = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        next(error);
     }
 };
 
-const patchUser = async (req, res) => {
+const patchUser = async (req, res, next) => {
     try {
         const { name, email } = req.body;
 
@@ -193,15 +164,7 @@ const patchUser = async (req, res) => {
         });
 
     } catch (error) {
-        if (error.code === "23505") {
-            return res.status(409).json({
-                message: "Ese correo ya está registrado"
-            })
-        }
-
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        next(error);
     }
 };
 
