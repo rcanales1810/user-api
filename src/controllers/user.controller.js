@@ -70,8 +70,7 @@ const createNewUser = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        const userId = Number(req.params.id);
-        const user = await userService.getUserById(userId);
+        const user = await userService.getUserById(req.userId);
         //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
         if (!user) {
             return res.status(404).json({
@@ -93,7 +92,6 @@ const updateUser = async (req, res) => {
     try {
         //Obtener el id, user y email
         const { name, email } = req.body;
-        const userId = Number(req.params.id);
 
         if (!name || !email) {
             return res.status(400).json({
@@ -109,7 +107,7 @@ const updateUser = async (req, res) => {
         }
 
         //verificar si existe el usuario a actualizar
-        const user = await userService.getUserById(userId);
+        const user = await userService.getUserById(req.userId);
 
         if (!user) {
             return res.status(404).json({
@@ -118,7 +116,7 @@ const updateUser = async (req, res) => {
         }
 
         //Llamar al servicio para actualizar
-        const updatedUser = await userService.updateUser(name, email, userId);
+        const updatedUser = await userService.updateUser(name, email, req.userId);
 
         res.status(200).json({
             updatedUser
@@ -131,7 +129,9 @@ const updateUser = async (req, res) => {
                 message: "Ese correo ya está registrado"
             })
         }
-
+        
+        console.error(error);
+        
         return res.status(500).json({
             message: "Error interno del servidor"
         });
@@ -141,8 +141,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const userId = Number(req.params.id);
-        const user = await userService.getUserById(userId);
+        const user = await userService.getUserById(req.userId);
 
         if (!user) {
             return res.status(404).json({
@@ -150,7 +149,7 @@ const deleteUser = async (req, res) => {
             });
         }
 
-        const deletedUser = await userService.deleteUser(userId);
+        const deletedUser = await userService.deleteUser(req.userId);
 
         res.status(200).json({
             deletedUser
@@ -166,7 +165,6 @@ const deleteUser = async (req, res) => {
 const patchUser = async (req, res) => {
     try {
         const { name, email } = req.body;
-        const userId = Number(req.params.id);
 
         if (name === undefined && email === undefined) {
             return res.status(400).json({
@@ -180,7 +178,7 @@ const patchUser = async (req, res) => {
             });
         }
 
-        const user = await userService.getUserById(userId);
+        const user = await userService.getUserById(req.userId);
 
         if (!user) {
             return res.status(404).json({
@@ -188,7 +186,7 @@ const patchUser = async (req, res) => {
             });
         }
 
-        const patchedUser = await userService.patchUser(name, email, userId);
+        const patchedUser = await userService.patchUser(name, email, req.userId);
 
         res.status(200).json({
             patchedUser

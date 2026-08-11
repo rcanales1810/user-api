@@ -8,6 +8,8 @@ const validateUserId = (req, res, next) =>{
             });
         }
 
+        req.userId = userId;
+
         next();
 };
 
