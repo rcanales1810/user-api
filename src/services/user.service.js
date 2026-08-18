@@ -1,8 +1,15 @@
 const pool = require("../config/db");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async () => {
     const result = await pool.query(
-        "SELECT * FROM users ORDER BY id"
+        `SELECT 
+            id,
+            name,
+            email,
+            is_active
+         FROM users 
+         ORDER BY id`
     );
 
     return result.rows;
@@ -10,7 +17,12 @@ const getAllUsers = async () => {
 
 const getActiveUsers = async () => {
     const result = await pool.query(
-        `SELECT * FROM users 
+        `SELECT 
+            id,
+            name,
+            email,
+            is_active
+        FROM users 
         WHERE is_active = TRUE
         ORDER BY id`
     );
@@ -18,12 +30,14 @@ const getActiveUsers = async () => {
     return result.rows;
 };
 
-const createNewUser = async (name, email) => {
+const createNewUser = async (name, email, password) => {
+    const passwordHash = await bcrypt.hash(password, 12);
+
     const result = await pool.query(
-        `INSERT INTO users (name, email) 
-        VALUES ($1, $2)
+        `INSERT INTO users (name, email, password_hash) 
+        VALUES ($1, $2, $3)
         RETURNING *;`,
-        [name, email]
+        [name, email, passwordHash]
     );
 
     return result.rows[0];
@@ -31,7 +45,11 @@ const createNewUser = async (name, email) => {
 
 const getUserById = async (id) => {
     const result = await pool.query(
-        `SELECT * 
+        `SELECT  
+            id,
+            name,
+            email,
+            is_active 
         FROM users
         WHERE id = $1 
         AND is_active = TRUE`,
@@ -70,18 +88,18 @@ const patchUser = async (name, email, id) => {
     const values = [];
     let parameterIndex = 1;
 
-    if (name !== undefined){
+    if (name !== undefined) {
         fields.push(`name = $${parameterIndex}`);
         values.push(name);
         parameterIndex++;
     }
 
-    if (email !== undefined){
+    if (email !== undefined) {
         fields.push(`email = $${parameterIndex}`);
         values.push(email);
         parameterIndex++;
     }
-    
+
     values.push(id);
 
     const result = await pool.query(

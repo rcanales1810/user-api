@@ -18,19 +18,19 @@ const getUsers = async (req, res) => {
 
 const createNewUser = async (req, res) => {
 
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
 
     //validación de los datos ingresados
     //"si name o email son falsos", o sea, si uno o el otro están vacios
-    if (!name || !email) {
+    if (!name || !email || !password) {
         //Los códigos 4xx significan errores del cliente, en síntesis, el cliente hizo algo mal. En este caso
         //no ha completado campos obligatorios. Sería bueno hacer que en la tabla en la BD estos campos sean NOT NULL
         return res.status(400).json({
-            message: "Ambos campos son obligatorios"
+            message: "Nombre, correo y clave son olbigatorios"
         });
     }
 
-    const user = await userService.createNewUser(name, email);
+    const user = await userService.createNewUser(name, email, password);
 
     res.status(201).json({
         message: "Usuario creado correctamente",
@@ -38,7 +38,7 @@ const createNewUser = async (req, res) => {
     });
 };
 
-const getUserById = async (req, res, next) => {
+const getUserById = async (req, res) => {
     const user = await userService.getUserById(req.userId);
     //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
     if (!user) {
@@ -52,7 +52,7 @@ const getUserById = async (req, res, next) => {
     });
 };
 
-const updateUser = async (req, res, next) => {
+const updateUser = async (req, res) => {
     //Obtener el id, user y email
     const { name, email } = req.body;
 
@@ -79,7 +79,7 @@ const updateUser = async (req, res, next) => {
     });
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUser = async (req, res) => {
     const user = await userService.getUserById(req.userId);
 
     if (!user) {
@@ -95,7 +95,7 @@ const deleteUser = async (req, res, next) => {
     });
 };
 
-const patchUser = async (req, res, next) => {
+const patchUser = async (req, res) => {
     const { name, email } = req.body;
 
     const user = await userService.getUserById(req.userId);

@@ -13,8 +13,8 @@ const isValidName = (name) => {
     return typeof name === "string" && name.trim().length > 0;
 };
 
-const hasNoPatchFields = (name, email) => {
-    return name === undefined && email === undefined;
+const hasPatchFields = (name, email) => {
+    return name !== undefined || email !== undefined;
 }
 
 const isValidPatchEmail = (email) => {
@@ -25,6 +25,6 @@ const isValidPatchEmail = (email) => {
 module.exports = {
     isValidEmail,
     isValidName,
-    hasNoPatchFields,
+    hasPatchFields,
     isValidPatchEmail
 };

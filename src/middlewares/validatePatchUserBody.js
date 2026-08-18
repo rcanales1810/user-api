@@ -1,12 +1,12 @@
 const {   
-    hasNoPatchFields, 
+    hasPatchFields, 
     isValidPatchEmail 
 } = require("../utils/validators");
 
 const validatePatchUserBody = (req, res, next) => {
     const { name, email } = req.body;
 
-    if (hasNoPatchFields(name, email)) {
+    if (!hasPatchFields(name, email)) {
         return res.status(400).json({
             message: "Debe ingresarse mínimo uno de los campos"
         });
