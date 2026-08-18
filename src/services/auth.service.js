@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const login = async (email, password) => {
 
@@ -26,9 +27,23 @@ const login = async (email, password) => {
         return null
     }
 
-    const {password_hash, ...safeUSer} = user;
+    const token = jwt.sign(
+        {
+            userId: user.id,
+            email: user.email
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "1h"
+        }
+    );
 
-    return safeUSer;
+    const { password_hash, ...userWithoutPassword } = user;
+
+    return {
+        user: userWithoutPassword,
+        token
+    };
 };
 
 module.exports = {
