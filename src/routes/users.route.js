@@ -1,4 +1,5 @@
 const express = require("express");
+const authorizeRole = require("../middlewares/authorizeRole");
 const validateUserBody = require("../middlewares/validateUserBody");
 const validatePatchUserBody = require("../middlewares/validatePatchUserBody");
 const validateUserId = require("../middlewares/validateUserId");
@@ -13,6 +14,7 @@ const {
     patchUser
 } = require("../controllers/user.controller");
 const { isValidPatchEmail } = require("../utils/validators");
+const authToken = require("../middlewares/authToken");
 
 const router = express.Router();
 
@@ -27,6 +29,7 @@ router.post(
 
 router.get(
     "/:id",
+    authToken,
     validateUserId,
     getUserById
 );
@@ -40,6 +43,8 @@ router.put(
 
 router.delete(
     "/:id",
+    authToken,
+    authorizeRole("admin"),
     validateUserId,
     deleteUser
 );

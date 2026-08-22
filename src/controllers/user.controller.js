@@ -18,7 +18,7 @@ const getUsers = async (req, res) => {
 
 const createNewUser = async (req, res) => {
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     //validación de los datos ingresados
     //"si name o email son falsos", o sea, si uno o el otro están vacios
@@ -30,7 +30,7 @@ const createNewUser = async (req, res) => {
         });
     }
 
-    const user = await userService.createNewUser(name, email, password);
+    const user = await userService.createNewUser(name, email, password, role);
 
     res.status(201).json({
         message: "Usuario creado correctamente",
