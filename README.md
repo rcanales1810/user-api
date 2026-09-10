@@ -92,7 +92,7 @@ Make sure you have the following installed:
 
 Clone the repository:
 ```bash
- git clone <>
+ git clone <https://github.com/rcanales1810/user-api.git>
 ```
 
 Navigate to project directory:
