@@ -88,3 +88,19 @@ Make sure you have the following installed:
 - npm
 - PostgreSQL
 
+### Installation
+
+Clone the repository:
+```bash
+ git clone <repository-url>
+```
+
+Navigate to project directory:
+```bash
+ cd user-api
+```
+
+Install the dependencies:
+```bash
+ npm install
+```
