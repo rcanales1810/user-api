@@ -1,13 +1,14 @@
 {
   "name": "user-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "RESTful API for user management built with Node.js, Express, and PostgreSQL",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ricardo",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

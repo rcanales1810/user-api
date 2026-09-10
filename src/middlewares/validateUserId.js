@@ -4,7 +4,7 @@ const validateUserId = (req, res, next) =>{
 
         if (!Number.isInteger(userId) || userId <= 0) {
             return res.status(400).json({
-                message: "ID inválido. El ID debe ser un entero positivo"
+                message: "ID is invalid. ID must be a positive integer"
             });
         }
 

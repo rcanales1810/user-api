@@ -18,8 +18,10 @@ const authToken = require("../middlewares/authToken");
 
 const router = express.Router();
 
-//En los dos casos de abajo, revisar BIEN el método que se usa
-router.get("/", getUsers);
+router.get(
+    "/",
+    getUsers
+);
 
 router.post(
     "/",
@@ -53,6 +55,7 @@ router.patch(
     "/:id", 
     validateUserId,
     validatePatchUserBody,
-    patchUser);
+    patchUser
+);
 
 module.exports = router;

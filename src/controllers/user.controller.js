@@ -1,5 +1,4 @@
 const userService = require("../services/user.service");
-const { isValidEmail } = require("../utils/validators");
 
 const getUsers = async (req, res) => {
     const { includeInactive } = req.query;
@@ -26,14 +25,14 @@ const createNewUser = async (req, res) => {
         //Los códigos 4xx significan errores del cliente, en síntesis, el cliente hizo algo mal. En este caso
         //no ha completado campos obligatorios. Sería bueno hacer que en la tabla en la BD estos campos sean NOT NULL
         return res.status(400).json({
-            message: "Nombre, correo y clave son olbigatorios"
+            message: "Name, email and password are required"
         });
     }
 
     const user = await userService.createNewUser(name, email, password, role);
 
     res.status(201).json({
-        message: "Usuario creado correctamente",
+        message: "User created successfully",
         user
     });
 };
@@ -43,7 +42,7 @@ const getUserById = async (req, res) => {
     //El 404 va FUERA DEL CATCH porque no es un error de conexión ni de sintaxis ni de la BD. TODO está bien, pero no se encontró el id buscado
     if (!user) {
         return res.status(404).json({
-            message: "Usuario no encontrado"
+            message: "User not found"
         });
     }
 
@@ -56,9 +55,9 @@ const updateUser = async (req, res) => {
     //Obtener el id, user y email
     const { name, email } = req.body;
 
-    if (!name || !email) {
+    if (!name || !email ) {
         return res.status(400).json({
-            message: "Ambos campos son obligatorios"
+            message: "Name and email are required"
         });
     }
 
@@ -67,7 +66,7 @@ const updateUser = async (req, res) => {
 
     if (!user) {
         return res.status(404).json({
-            message: "Usuario no encontrado"
+            message: "User not found"
         });
     }
 
@@ -84,7 +83,7 @@ const deleteUser = async (req, res) => {
 
     if (!user) {
         return res.status(404).json({
-            message: "Usuario no encontrado"
+            message: "User not found"
         });
     }
 
@@ -102,7 +101,7 @@ const patchUser = async (req, res) => {
 
     if (!user) {
         return res.status(404).json({
-            message: "Usuario no encontrado"
+            message: "User not found"
         });
     }
 

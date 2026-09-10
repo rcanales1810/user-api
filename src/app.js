@@ -3,6 +3,8 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
+const swaggerUi = require("swagger-ui-express");
+const openApiSpecification = require("./docs/openapi");
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 //Aquí se crea la app en sí
@@ -23,10 +25,24 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+
 app.use(limiter);
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+app.use(
+    "/auth", 
+    authRoutes
+);
+
+app.use(
+    "/users",
+    userRoutes
+);
+
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(openApiSpecification)
+);
 
 app.use(errorHandler);
 

@@ -8,13 +8,13 @@ const validatePatchUserBody = (req, res, next) => {
 
     if (!hasPatchFields(name, email)) {
         return res.status(400).json({
-            message: "Debe ingresarse mínimo uno de los campos"
+            message: "At least one field must be provided"
         });
     }
 
     if (isValidPatchEmail(email)) {
         return res.status(400).json({
-            message: "El correo no tiene el formato correcto: user@mail.com"
+            message: "Invalid email format: user@mail.com"
         });
     }
 

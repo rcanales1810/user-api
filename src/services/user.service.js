@@ -4,30 +4,32 @@ const bcrypt = require("bcrypt");
 const getAllUsers = async () => {
     const result = await pool.query(
         `SELECT 
-            id,
-            name,
-            email,
-            is_active
+            *
          FROM users 
          ORDER BY id`
     );
 
-    return result.rows;
+    const userWithoutPassword = result.rows.map(
+        ({ password_hash, ...user }) => user
+    );
+
+    return userWithoutPassword;
 };
 
 const getActiveUsers = async () => {
     const result = await pool.query(
         `SELECT 
-            id,
-            name,
-            email,
-            is_active
+            *
         FROM users 
         WHERE is_active = TRUE
         ORDER BY id`
     );
 
-    return result.rows;
+    const userWithoutPassword = result.rows.map(
+        ({ password_hash, ...user }) => user
+    );
+
+    return userWithoutPassword;
 };
 
 const createNewUser = async (name, email, password) => {
@@ -40,23 +42,32 @@ const createNewUser = async (name, email, password) => {
         [name, email, passwordHash]
     );
 
-    return result.rows[0];
+    const user = result.rows[0];
+
+    const { password_hash, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
 };
 
 const getUserById = async (id) => {
     const result = await pool.query(
         `SELECT  
-            id,
-            name,
-            email,
-            is_active 
+            *
         FROM users
         WHERE id = $1 
         AND is_active = TRUE`,
         [id]
     );
 
-    return result.rows[0];
+    const user = result.rows[0];
+
+    if (!user) {
+        return null;
+    }
+
+    const { password_hash, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
 };
 
 const updateUser = async (name, email, id) => {
@@ -68,7 +79,11 @@ const updateUser = async (name, email, id) => {
         [name, email, id]
     );
 
-    return result.rows[0];
+    const user = result.rows[0];
+
+    const { password_hash, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
 };
 
 const deleteUser = async (id) => {

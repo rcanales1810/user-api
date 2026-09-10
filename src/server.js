@@ -15,5 +15,5 @@ pool.connect()
     });
 
 app.listen(PORT, () => {
-    console.log(`servidor en puerto ${PORT}`);
+    console.log(`Server on port ${PORT}`);
 });

@@ -3,7 +3,7 @@ const authorizeRole = (role) => {
 
         if (req.user.role !== role) {
             return res.status(403).json({
-                message: "No tienes permiso para realizar esta acción"
+                message: "You do not have permission to perform this action"
             });
         }
 

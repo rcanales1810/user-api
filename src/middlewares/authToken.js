@@ -6,7 +6,7 @@ const authToken = (req, res, next) => {
 
         if (!authHeader) {
             return res.status(401).json({
-                message: "Token no proporcionado"
+                message: "Token not provided"
             });
         }
 
@@ -14,7 +14,7 @@ const authToken = (req, res, next) => {
 
         if (scheme !== "Bearer" || !token) {
             return res.status(401).json({
-                message: "Formato del token inválido"
+                message: "Invalid token format"
             });
         }
 
@@ -29,7 +29,7 @@ const authToken = (req, res, next) => {
 
     } catch (error) {
         return res.status(401).json({
-            message: "Token inválido o expirado"
+            message: "Invalid or expired token"
         });
     }
 };

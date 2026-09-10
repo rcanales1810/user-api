@@ -5,13 +5,13 @@ const validateUserBody = (req, res, next) => {
 
     if (!isValidName(name)) {
         return res.status(400).json({
-            message: "El nombre es obligatorio"
+            message: "Name is required"
         });
     }
 
     if (!isValidEmail(email)) {
         return res.status(400).json({
-            message: "El correo no tiene el formato correcto: user@mail.com"
+            message: "Invalid email format: user@mail.com"
         });
     }
 
